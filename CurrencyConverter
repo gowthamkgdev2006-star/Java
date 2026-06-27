@@ -1,0 +1,94 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class CurrencyConverter {
+    private static Map<String, Double> exchangeRates;
+
+    static {
+        // Initialize exchange rates (base: USD)
+        exchangeRates = new HashMap<>();
+        exchangeRates.put("USD", 1.0);
+        exchangeRates.put("EUR", 0.92);
+        exchangeRates.put("GBP", 0.79);
+        exchangeRates.put("JPY", 149.50);
+        exchangeRates.put("AUD", 1.52);
+        exchangeRates.put("CAD", 1.36);
+        exchangeRates.put("INR", 83.12);
+        exchangeRates.put("CHF", 0.88);
+        exchangeRates.put("CNY", 7.24);
+        exchangeRates.put("MXN", 17.05);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        boolean continueConverter = true;
+
+        System.out.println("====================================");
+        System.out.println("     Welcome to Currency Converter");
+        System.out.println("====================================");
+        System.out.println("\nSupported Currencies: USD, EUR, GBP, JPY, AUD, CAD, INR, CHF, CNY, MXN");
+
+        while (continueConverter) {
+            System.out.println("\n--- Enter Conversion Details ---");
+
+            // Get source currency
+            System.out.print("Enter source currency (e.g., USD): ");
+            String sourceCurrency = scanner.nextLine().toUpperCase().trim();
+
+            if (!exchangeRates.containsKey(sourceCurrency)) {
+                System.out.println("❌ Currency not supported: " + sourceCurrency);
+                continue;
+            }
+
+            // Get target currency
+            System.out.print("Enter target currency (e.g., EUR): ");
+            String targetCurrency = scanner.nextLine().toUpperCase().trim();
+
+            if (!exchangeRates.containsKey(targetCurrency)) {
+                System.out.println("❌ Currency not supported: " + targetCurrency);
+                continue;
+            }
+
+            // Get amount
+            System.out.print("Enter amount to convert: ");
+            double amount;
+            try {
+                amount = Double.parseDouble(scanner.nextLine());
+                if (amount < 0) {
+                    System.out.println("❌ Amount cannot be negative!");
+                    continue;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("❌ Invalid amount entered!");
+                continue;
+            }
+
+            // Perform conversion
+            double convertedAmount = convertCurrency(amount, sourceCurrency, targetCurrency);
+
+            // Display result
+            System.out.println("\n--- Conversion Result ---");
+            System.out.printf("%.2f %s = %.2f %s%n", amount, sourceCurrency, convertedAmount, targetCurrency);
+            System.out.printf("Exchange Rate: 1 %s = %.4f %s%n", 
+                sourceCurrency, 
+                exchangeRates.get(targetCurrency) / exchangeRates.get(sourceCurrency),
+                targetCurrency);
+
+            // Ask to continue
+            System.out.print("\nDo you want to perform another conversion? (yes/no): ");
+            String response = scanner.nextLine().trim().toLowerCase();
+            continueConverter = response.equals("yes") || response.equals("y");
+        }
+
+        System.out.println("\n====================================");
+        System.out.println("Thank you for using Currency Converter!");
+        System.out.println("====================================");
+        scanner.close();
+    }
+
+    private static double convertCurrency(double amount, String from, String to) {
+        double amountInUSD = amount / exchangeRates.get(from);
+        return amountInUSD * exchangeRates.get(to);
+    }
+}
