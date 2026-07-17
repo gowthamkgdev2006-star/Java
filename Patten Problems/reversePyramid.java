@@ -1,5 +1,5 @@
-public class reverseTriangle
-{
+public class reversePyramid
+    {
     public static void main(String[] args)
     {
         int n = 5;
